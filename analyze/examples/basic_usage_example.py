@@ -76,7 +76,7 @@ def basic_usage_example():
                                                       rgb2bgr=False,
                                                       display=False,
                                                       save_fig_path=image_out_path,
-                                                      )[0]
+                                                      )
 
         # optional: save images with visualizations in a list - later will be used for video creation
         images_with_boxes.append(image_with_boxes)
