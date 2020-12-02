@@ -2,7 +2,7 @@ import os
 import numpy as np
 
 from analyze.analyzer import Analyzer
-
+from analyze.tests.utils_test import load_test_analyzer
 
 CLASS_NAMES = ['__background__',  # always index 0
                 'airplane', 'antelope', 'bear', 'bicycle',
@@ -23,12 +23,8 @@ def basic_usage_example():
 
 
     # load reference analyzer
+    analyzer_ref, analyze_root_dir = load_test_analyzer()
     base_dir = os.path.dirname(__file__)
-    relative_data_dir = '../tests/data/ILSVRC2015_00078000'
-    data_dir = os.path.join(base_dir, relative_data_dir)
-    analyzer_file = os.path.join(data_dir, 'analyzer.p')
-    analyzer_ref = Analyzer.load(analyzer_file, load_images_from_dir=False)
-    analyze_root_dir = os.path.abspath(os.path.join(base_dir, '..'))
 
     # create new analyzer
     output_dir = os.path.join(base_dir, 'output','simple_usage_example')
@@ -53,7 +49,7 @@ def basic_usage_example():
     for frame_id, item in analyzer_ref.items():
 
         # inference simulation
-        prediction, ground_truth, image_path, image, _ = analyzer.unpack_item(item)
+        prediction, ground_truth, image_path, image, _ = analyzer_ref.unpack_item(item)
         image_path = os.path.join(analyze_root_dir, image_path)
 
         # log results in analyzer

@@ -1,7 +1,9 @@
 import pytest
 import numpy
 import numpy as np
+import os
 
+from analyze.analyzer import Analyzer
 
 # list of all builtin types in python (3)
 import builtins
@@ -136,3 +138,32 @@ def compare_instances(instance1, instance2):
     is_equal = all(is_equal_list)
 
     return is_equal
+
+
+def load_test_analyzer(data_dir='ILSVRC2015_00078000'):
+    """
+    Load analyzer object from saved test data.
+
+    Parameters
+    ----------
+    data_dir : str, optional
+        Data directory name, should be name of one of the folders inside analyze/tests/data/.
+
+    Returns
+    -------
+    anaylzer : Analyzer
+        Analyzer object.
+    analyzer_root_dir : str
+        Path of analyzer root directory, such that full images path is the concatenation of analyzer_root_dir and
+        analyzer.data image_path.
+    """
+
+    # load reference analyzer
+    base_dir = os.path.dirname(__file__)
+    relative_data_dir = os.path.join('data', data_dir)
+    data_dir = os.path.join(base_dir, relative_data_dir)
+    analyzer_file = os.path.join(data_dir, 'analyzer.p')
+    analyzer = Analyzer.load(analyzer_file, load_images_from_dir=False)
+    analyzer_root_dir = os.path.join(base_dir, '..')
+
+    return analyzer, analyzer_root_dir

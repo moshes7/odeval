@@ -43,9 +43,9 @@ class Box(object):
                 "last dimension of bbox should have a size of 4, got {}".format(bbox.size(-1))
             )
 
-        if (not isinstance(image_shape, tuple)) or (len(image_shape) != 2):
+        if (not isinstance(image_shape, tuple)) or ((len(image_shape) != 2) and (len(image_shape) != 3)):
             raise ValueError(
-                "image_shape must be tuple of length 2 (height, width), got {}".format(image_shape)
+                "image_shape must be tuple of length 2 (height, width) or 3 (height, width, channels), got {}".format(image_shape)
             )
 
         if bbox_type not in ['ltrb']:
@@ -107,12 +107,16 @@ class Box(object):
         """
         return field in self.extra_fields
 
-    def __getitem__(self, item):
-        # FIXME: implementation seems to be wrong, there is no use in 'item'
-        bbox = Box(bbox=self.bbox,
+    def __getitem__(self, key):
+        # slice using key
+        bboxes = self.bbox[key, :]  # shape (len(key), 4)
+        if bboxes.ndim == 1:
+            bboxes = bboxes[np.newaxis, :]
+        extra_fields = {k: v[key] for k, v in self.extra_fields.items()}
+        bbox = Box(bbox=bboxes,
                    image_shape=self.image_shape,
                    bbox_type=self.bbox_type,
-                   extra_fields=self.extra_fields)
+                   extra_fields=extra_fields)
         return bbox
 
     def __delitem__(self, key):

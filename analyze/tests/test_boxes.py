@@ -124,7 +124,7 @@ def test_is_points_inside_bounding_boxes():
 
 if __name__ == '__main__':
 
-    # test_boxes_iou()
+    test_boxes_iou()
     test_is_points_inside_bounding_boxes()
 
     print('Done')
