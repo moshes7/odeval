@@ -506,7 +506,7 @@ class Box(object):
         # warp bounding box
         bbox = self.bbox.reshape((-1, 2))
         bbox_resized = Box.get_warped_points(bbox, M)
-        bbox_resized = np.around(bbox_resized).astype(np.int)  # cast to int
+        # bbox_resized = np.around(bbox_resized).astype(np.int)  # cast to int
         bbox_resized = bbox_resized.reshape((-1, 4))
 
         self.bbox = bbox_resized

@@ -68,11 +68,11 @@ class ConfusionMatrix(object):
         self.metrics_tables = None
 
         # verify that prediction and ground_truth use the same image shape
-        if self.prediction.image_shape != self.ground_truth.image_shape:
+        if len(self.prediction) and (self.prediction.image_shape != self.ground_truth.image_shape):
             self.prediction.resize(self.ground_truth.image_shape)
 
-        #
-        if (self.prediction is not None) and (self.ground_truth is not None):
+        # calculate confusion matrix and performance metrics
+        if (self.prediction is not None) and (self.ground_truth is not None) and (self.ground_truth is not None):
             self.simple_wrapper(self.prediction, self.ground_truth)
 
     def __repr__(self):

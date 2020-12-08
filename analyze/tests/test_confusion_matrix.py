@@ -228,7 +228,7 @@ def test_empty_preds_gts():
             try:
                 ground_truth = Box([], image_shape=None)
             except ValueError as e:
-                cond3 = e.__repr__() == "ValueError('image_shape must be tuple of length 2 (height, width), got None',)"
+                cond3 = e.__repr__() == "ValueError('image_shape must be tuple of length 2 (height, width) or 3 (height, width, channels), got None',)"
 
         # calculate confusion matrix of current frame
         cm = ConfusionMatrix.calculate_confusion_matrix(prediction,

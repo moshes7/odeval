@@ -473,7 +473,7 @@ class Analyzer(MutableMapping):
         image_size_factor = np.clip(image_size_factor, 0.5, 1.5)
 
         # overlay ground truths
-        if show_ground_truth and (len(ground_truth) > 0):
+        if show_ground_truth and (ground_truth is not None) and (len(ground_truth) > 0):
             if ground_truth.image_shape != image.shape:
                 ground_truth.resize(image.shape)
             image, colors = vis.overlay_boxes(image, boxes=ground_truth, class_names=class_names, color_factor=0, image_size_factor=image_size_factor)
@@ -648,6 +648,12 @@ class Analyzer(MutableMapping):
                                                             )
 
         # save performance metrics
+
+        # text files
+        self.metrics_tables['global'].to_csv(os.path.join(self.output_dir, 'global metrics.csv'))
+        self.metrics_tables['class'].to_csv(os.path.join(self.output_dir, 'class metrics.csv'))
+
+        # images
         image_path_class_metrics = os.path.join(self.output_dir, 'class metrics.png')
         image_path_global_metrics = os.path.join(self.output_dir, 'global metrics.png')
         dfi.export(self.metrics_tables['class'], image_path_class_metrics)
