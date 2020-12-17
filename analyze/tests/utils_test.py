@@ -25,7 +25,7 @@ def approx_equal_dicts(d, d_ref, keys=None, rel=None, abs=None):
     d_ref : dict
         Reference dictionary, to which d will be
 
-    key : list, optional
+    keys : list, optional
         List of dictionary keys to be approximated. If None all keys of d_ref are used.
 
     rel : float, optional
@@ -41,7 +41,7 @@ def approx_equal_dicts(d, d_ref, keys=None, rel=None, abs=None):
     """
 
     if keys is None:
-        keys= d_ref.keys()
+        keys = d_ref.keys()
 
     conditions = []
 

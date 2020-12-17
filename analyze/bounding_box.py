@@ -34,19 +34,13 @@ class Box(object):
 
         # verify correctness
         if (bbox.size > 0) and (bbox.ndim != 2):  # bbox must be either empty or of shape (N, 4)
-            raise ValueError(
-                "bbox should have 2 dimensions, got {}".format(bbox.ndimension())
-            )
+            raise ValueError("bbox should have 2 dimensions, got {}".format(bbox.ndimension()))
 
         if (bbox.size > 0) and (bbox.shape[-1] != 4):
-            raise ValueError(
-                "last dimension of bbox should have a size of 4, got {}".format(bbox.size(-1))
-            )
+            raise ValueError("last dimension of bbox should have a size of 4, got {}".format(bbox.size(-1)))
 
         if (not isinstance(image_shape, tuple)) or ((len(image_shape) != 2) and (len(image_shape) != 3)):
-            raise ValueError(
-                "image_shape must be tuple of length 2 (height, width) or 3 (height, width, channels), got {}".format(image_shape)
-            )
+            raise ValueError("image_shape must be tuple of length 2 (height, width) or 3 (height, width, channels), got {}".format(image_shape))
 
         if bbox_type not in ['ltrb']:
             raise ValueError("mode should be 'ltrb'")
@@ -108,15 +102,25 @@ class Box(object):
         return field in self.extra_fields
 
     def __getitem__(self, key):
+
+        # cast key to list
+        if not isinstance(key, list) and not isinstance(key, slice) and not isinstance(key, np.ndarray):
+            key = [key]
+
         # slice using key
         bboxes = self.bbox[key, :]  # shape (len(key), 4)
-        if bboxes.ndim == 1:
+        if bboxes.ndim == 1:  # verify shape of (:, 4)
             bboxes = bboxes[np.newaxis, :]
-        extra_fields = {k: v[key] for k, v in self.extra_fields.items()}
+
+        extra_fields = {}
+        for k, v in self.extra_fields.items():
+            extra_fields[k] = [v[ind] for ind in key]
+
         bbox = Box(bbox=bboxes,
                    image_shape=self.image_shape,
                    bbox_type=self.bbox_type,
                    extra_fields=extra_fields)
+
         return bbox
 
     def __delitem__(self, key):
@@ -134,6 +138,17 @@ class Box(object):
     def __len__(self):
         return self.bbox.shape[0]
 
+    def __iter__(self):
+        self._index = -1
+        return self
+
+    def __next__(self):
+        self._index += 1
+        if self._index >= len(self):
+            raise StopIteration
+        else:
+            return self.__getitem__(self._index)
+
     def __repr__(self):
         s = self.__class__.__name__ + "("
         s += "num_boxes={}, ".format(len(self))
@@ -141,6 +156,97 @@ class Box(object):
         s += "image_height={}, ".format(self.image_shape[0])
         s += "bbox_type={})".format(self.bbox_type)
         return s
+
+
+    def insert(self, ind, box):
+        """
+        Insert bbox and extra_fields in box into current instance at index ind.
+        Assume that all attributes (image_shape, bbox_type, etc.) are identical.
+
+        Parameters
+        ----------
+        ind : int
+            Index in which bbox will be inserted.
+        box : bounding_box.Box
+            Bounding box to be inserted.
+
+        Returns
+        -------
+        None
+        """
+
+        # verity bbox type
+        if not isinstance(box, Box):
+            raise ValueError("bbox type shold be 'Box'")
+
+        # insert values to bbox
+        self.bbox = np.insert(self.bbox, ind, box.bbox, axis=0)
+
+        # insert values to extra_fields
+        for key, val_list in box.extra_fields.items():
+            for val in val_list:
+                self.extra_fields[key].insert(ind, val)
+                ind +=1
+
+    def append(self, box):
+        """
+        Append bbox and extra_fields in box into current instance.
+        Assume that all attributes (image_shape, bbox_type, etc.) are identical.
+
+        Parameters
+        ----------
+        box : bounding_box.Box
+            Bounding box to be appended.
+
+        Returns
+        -------
+        None
+        """
+        self.insert(-1, box)
+
+    @staticmethod
+    def concatenate(box_seq):
+        """
+        Concatenate boxes sequence to one box.
+        Attributes (e.g. image_shape, bbox_type) will be taken from first elemnt in sequence.
+
+        Parameters
+        ----------
+        box_seq : Sequence (e.g. list, tuple)
+            Sequence of bounding box to be concatenated.
+
+        Returns
+        -------
+        box: bounding_box.Box()
+            Concatenated box.
+        """
+        if len(box_seq) > 0:
+            box = Box.copy(box_seq[0])  # initialize with first sequence element
+            for n in range(1, len(box_seq)):  # append all other elements
+                box.append(box_seq[n])
+        else:
+            box = box_seq
+
+        return box
+
+    @staticmethod
+    def copy(box):
+        """
+        Make a copy of box.
+
+        Parameters
+        ----------
+        box : bounding_box.Box
+            Input box.
+
+        Returns
+        -------
+        box_out : bounding_box.Box
+             Box copy.
+        """
+
+        box_out = Box(bbox=box.bbox, image_shape=box.image_shape, bbox_type=box.bbox_type, extra_fields=box.extra_fields)
+        return box_out
 
 
     def area(self):
