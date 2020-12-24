@@ -469,12 +469,16 @@ class Analyzer(MutableMapping):
             image = cv2.imread(image_name, cv2.IMREAD_UNCHANGED)
             image = vis.normalize_image_for_display(image, bgr2rgb=False)
 
-        image_size_factor = (image.shape[0] + image.shape[1]) / 1500
+        image_size_factor = (image.shape[0] + image.shape[1]) / 1500  # try to keep reasonable image dimensions, where width+hieght is not to far from 1500 pixels
         image_size_factor = np.clip(image_size_factor, 0.5, 1.5)
+
+        # get class names
+        if class_names is None:
+            class_names = self.class_names
 
         # overlay ground truths
         if show_ground_truth and (ground_truth is not None) and (len(ground_truth) > 0):
-            if ground_truth.image_shape != image.shape:
+            if ground_truth.image_shape[0:2] != image.shape[0:2]:
                 ground_truth.resize(image.shape)
             image, colors = vis.overlay_boxes(image, boxes=ground_truth, class_names=class_names, color_factor=0, image_size_factor=image_size_factor)
             image = vis.overlay_scores_and_class_names(image, boxes=ground_truth, class_names=class_names, colors=colors, text_size_factor=0.7, text_position='below', image_size_factor=image_size_factor)
@@ -492,7 +496,7 @@ class Analyzer(MutableMapping):
                     del prediction[ind]
 
             if len(prediction) > 0:
-                if prediction.image_shape != image.shape:
+                if prediction.image_shape[0:2] != image.shape[0:2]:
                     prediction.resize(image.shape)
                 image, colors = vis.overlay_boxes(image, boxes=prediction, class_names=class_names, color_factor=1, thickness=3, image_size_factor=image_size_factor)
                 image = vis.overlay_scores_and_class_names(image, boxes=prediction, class_names=class_names, colors=colors, text_size_factor=0.8, image_size_factor=image_size_factor)
