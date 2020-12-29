@@ -167,3 +167,12 @@ def load_test_analyzer(data_dir='ILSVRC2015_00078000'):
     analyzer_root_dir = os.path.join(base_dir, '..')
 
     return analyzer, analyzer_root_dir
+
+def load_analyzer(data_dir, load_images_from_dir=False):
+
+    # load reference analyzer
+    analyzer_file = os.path.join(data_dir, 'analyzer.p')
+    analyzer = Analyzer.load(analyzer_file, load_images_from_dir=False)
+    analyzer_root_dir = os.path.dirname(analyzer_file)
+
+    return analyzer, analyzer_root_dir
