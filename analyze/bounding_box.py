@@ -114,7 +114,9 @@ class Box(object):
 
         extra_fields = {}
         for k, v in self.extra_fields.items():
-            extra_fields[k] = [v[ind] for ind in key]
+            extra_fields[k] = [v[ind] for ind in key]  # type is list
+            if isinstance(v, np.ndarray):  # cast type to ndarray
+                extra_fields[k] = np.asarray(extra_fields[k])
 
         bbox = Box(bbox=bboxes,
                    image_shape=self.image_shape,
@@ -179,14 +181,24 @@ class Box(object):
         if not isinstance(box, Box):
             raise ValueError("bbox type shold be 'Box'")
 
+        # treat case of ind == -1
+        ind_insert = ind if ind != -1 else self.bbox.shape[0]  # since -1 inserts at the BEGGINING, not end
+
         # insert values to bbox
-        self.bbox = np.insert(self.bbox, ind, box.bbox, axis=0)
+        self.bbox = np.insert(self.bbox, ind_insert, box.bbox, axis=0)
 
         # insert values to extra_fields
         for key, val_list in box.extra_fields.items():
-            for val in val_list:
-                self.extra_fields[key].insert(ind, val)
-                ind +=1
+
+            if isinstance(val_list, list):  # treat list
+                ind_current = ind_insert
+                for val in val_list:
+                    self.extra_fields[key].insert(ind_current, val)
+                    ind_current += 1
+
+            elif isinstance(val_list, np.ndarray):  # treat ndarray
+                self.extra_fields[key] = np.insert(self.extra_fields[key], ind_insert, val_list, axis=0)
+
 
     def append(self, box):
         """
