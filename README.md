@@ -1,6 +1,6 @@
 # Installation
 pip install -r requirements.txt  
-cd path/to/analyze/root  
+cd path/to/odeval/root  
 pip install -e .  
 
 # Basic Usage
