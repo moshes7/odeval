@@ -24,11 +24,11 @@ def test_load_and_save():
     analyzer_full = Analyzer.load(analyzer_file)
 
     # save analyzer in temporary directory
-    outupt_dir = os.path.join(data_dir, 'tmp_full')
-    shutil.rmtree(outupt_dir, ignore_errors=True)  # delete existing temp dir
+    output_dir = os.path.join(data_dir, 'tmp_full')
+    shutil.rmtree(output_dir, ignore_errors=True)  # delete existing temp dir
 
     # save instance with image dir
-    output_file_full = os.path.join(outupt_dir, 'analyzer.p')
+    output_file_full = os.path.join(output_dir, 'analyzer.p')
     analyzer_full.save(output_file_full, save_thin_instance=False, save_images_in_dir=True, image_name_template='{:08d}.png')
 
     # ----------------------------
@@ -38,11 +38,11 @@ def test_load_and_save():
     analyzer_thin = Analyzer.load(analyzer_file, load_images_from_dir=True, sfx='png')  # use lossless png image, not jpg
 
     # save analyzer in temporary directory
-    outupt_dir = os.path.join(data_dir, 'tmp_thin')
-    shutil.rmtree(outupt_dir, ignore_errors=True)  # delete existing temp dir
+    output_dir = os.path.join(data_dir, 'tmp_thin')
+    shutil.rmtree(output_dir, ignore_errors=True)  # delete existing temp dir
 
     # save instance with image dir
-    output_file_thin = os.path.join(outupt_dir, 'analyzer.p')
+    output_file_thin = os.path.join(output_dir, 'analyzer.p')
     analyzer_thin.save(output_file_thin, save_thin_instance=True, save_images_in_dir=True, image_name_template='{:08d}.png')  # use lossless png image, not jpg
 
     # ----------------------------------------------------------------
