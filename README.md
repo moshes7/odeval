@@ -25,7 +25,7 @@ pip install -e .
 ```
 
 # Basic Usage
-See [basic_usage_example.py](examples/basic_usage_example.py) for basic usage example.  
+See [basic_usage_example.py](analyze/examples/basic_usage_example.py) for basic usage example.  
 Sea [viewer_example.py](analyze/examples/viewer_example.py) for interactive viewer example (beta).  
 
 # Output Examples
