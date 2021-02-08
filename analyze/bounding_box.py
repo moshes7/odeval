@@ -237,7 +237,7 @@ class Box(object):
             for n in range(1, len(box_seq)):  # append all other elements
                 box.append(box_seq[n])
         else:
-            box = box_seq
+            raise ValueError("len(box_seq) should be larget than 0")
 
         return box
 

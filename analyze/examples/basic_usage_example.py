@@ -4,23 +4,12 @@ import numpy as np
 from analyze.analyzer import Analyzer
 from analyze.tests.utils_test import load_test_analyzer
 
-CLASS_NAMES = ['__background__',  # always index 0
-                'airplane', 'antelope', 'bear', 'bicycle',
-                'bird', 'bus', 'car', 'cattle',
-                'dog', 'domestic_cat', 'elephant', 'fox',
-                'giant_panda', 'hamster', 'horse', 'lion',
-                'lizard', 'monkey', 'motorcycle', 'rabbit',
-                'red_panda', 'sheep', 'snake', 'squirrel',
-                'tiger', 'train', 'turtle', 'watercraft',
-                'whale', 'zebra']
-
 
 def basic_usage_example():
 
     """
     Simulate inference loop by using saved analyzer.
     """
-
 
     # load reference analyzer
     analyzer_ref, analyze_root_dir = load_test_analyzer()
@@ -30,7 +19,7 @@ def basic_usage_example():
     output_dir = os.path.join(base_dir, 'output','simple_usage_example')
     analyzer = Analyzer(output_dir=output_dir,
                         output_video_name='video.avi',
-                        class_names=CLASS_NAMES,
+                        class_names=analyzer_ref.class_names,
                         bbox_match_method='pred_bbox_center',
                         score_th=0.25,
                         iou_th=0.4,
