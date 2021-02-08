@@ -38,7 +38,7 @@ Global performance metrics
 Per class performance metrics  
 ![Per Class Evaluation Metrics](analyze/tests/data/ILSVRC2015_00078000/analysis/class%20metrics.png)  
 
-Image with overlayed ground truth (black) and prediction (color) bounding boxes
+Image with overlayed ground truth (black) and prediction (color) bounding boxes  
 ![Image with overlayed boxes](analyze/tests/save_fig_example.png)
 
 Interactive viewer  
