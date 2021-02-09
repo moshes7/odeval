@@ -3,9 +3,9 @@ The purpose of this package is to easily evaluate object detection performance i
 Currently, Most object detection papers implementations and open-source use COCO evaluation metrics (average precision / recall). 
 Tough very popular, these metrics do not tell the whole story.
 
-This package tries to fill this gap. The main idea is to extend confusion matrix, designed for classification problem, 
-to the case of detection problems. This is done by adding False (Miss) Detection row (column) and formoing a generalized confusion matrix.  
-Once we have a confusion matrix, we can calculate basic metrics, e.g. True Positive (TP), False Positive (FP). 
+This package tries to fill this gap. The main idea is to extend the confusion matrix, designed for classification problem, 
+to the case of detection problems. This is done by adding false (miss) Detection row (column) and forming a *generalized* confusion matrix.  
+Once we have a *generalized* confusion matrix, we can calculate basic metrics: True Positive (TP), False Positive (FP), True Negative (TN) and False Negative (FN). 
 Then, we can calculate any evaluation metric, such as precision, recall and fdr.  
 We calculate per class (i.e. one versus all or binary classification) and global evaluation metrics. The global metrics are calculated using *macro* and *micro* methods. 
 See implemtation in code (e.g. in [confusion_matrix.py](analyze/confusion_matrix.py#L777)) and references for more details. 
