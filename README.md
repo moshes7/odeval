@@ -5,8 +5,8 @@ Tough very popular, these metrics do not tell the whole story.
 
 This package tries to fill this gap. The main idea is to extend the confusion matrix, designed for classification problem, 
 to the case of detection problems. This is done by adding false (miss) Detection row (column) and forming a *generalized* confusion matrix.  
-Once we have a *generalized* confusion matrix, we can calculate basic metrics: True Positive (TP), False Positive (FP), True Negative (TN) and False Negative (FN). 
-Then, we can calculate any evaluation metric, such as precision, recall and fdr.  
+Once we have a generalized confusion matrix, we can calculate basic metrics: True Positive (TP), False Positive (FP), True Negative (TN) and False Negative (FN). 
+Then, we can calculate any evaluation metric, such as precision, recall and fdr (see [wikipedia](https://en.wikipedia.org/wiki/Confusion_matrix) for more details).  
 We calculate per class (i.e. one versus all or binary classification) and global evaluation metrics. The global metrics are calculated using *macro* and *micro* methods. 
 See implemtation in code (e.g. in [confusion_matrix.py](analyze/confusion_matrix.py#L777)) and references for more details. 
 
