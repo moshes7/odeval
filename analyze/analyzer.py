@@ -446,6 +446,8 @@ class Analyzer(MutableMapping):
             If True, image will be displayed.
         save_fig_path : str, optional
             If not None, image will be saved on this path.
+        resize_factor : float, optional
+            Image resize factor.
         filter_pred_by_score : bool, optional
             If True, only predictions with score higher than self.score_th will be displayed.
 

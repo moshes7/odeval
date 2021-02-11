@@ -19,6 +19,13 @@ Main features:
 change thresholds, etc. See [viewer_example.py](analyze/examples/viewer_example.py).
 
 # Installation
+Optional: Create and activate new virtual environment  
+```
+cd path/to/new/venv
+virtualenv odeval -p python3.6  # 3.6 or higher  
+source seq-odeval/bin/activate
+```  
+Install odeval
 ```
 cd path/to/wandted/dir
 git clone https://github.com/moshes7/odeval.git

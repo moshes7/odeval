@@ -148,7 +148,7 @@ def convert_labels(labels, class_names, format_out):
             labels = [ind_to_name[ind] for ind in labels]
 
     if format_out == 'indices':
-        if (not isinstance(labels[0], int)):  # if labels are indices, convert to strings
+        if (not np.issubdtype(type(labels[0]), np.integer)):  # if labels are indices, convert to strings
             labels = [name_to_ind[ind] for ind in labels]
 
     return labels
@@ -198,7 +198,7 @@ def overlay_boxes(image, boxes, class_names=None, color_factor=1, thickness=2, i
     thickness : int, optional
         Parameter which controls box thickness.
     image_size_factor : float, optional
-        Scale displayed paramenter (e.g. text, lines) by image size - for nicer display.
+        Scale displayed parameter (e.g. text, lines) by image size - for nicer display.
 
     Returns
     -------
