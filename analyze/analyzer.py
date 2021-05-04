@@ -167,6 +167,7 @@ class Analyzer(MutableMapping):
         s = self.__class__.__name__ + "("
         s += "num_elements={}, ".format(len(self.data))
         s += "images_resize_factor={}".format(self.image_resize_factor)
+        s += ")"
         return s
 
     def update_analyzer(self,
@@ -244,6 +245,16 @@ class Analyzer(MutableMapping):
         cm = item.get('cm', None)
 
         return prediction, ground_truth, image_path, image, cm
+
+    def get_image(self, key):
+
+        if self[key]['image'] is not None:
+            image = self[key]['image']
+        else:
+            image_name = os.path.abspath(self[key]['image_path'])
+            image = cv2.imread(image_name, cv2.IMREAD_UNCHANGED)
+
+        return image
 
 
     def resize_image(self, image, images_resize_factor=None):

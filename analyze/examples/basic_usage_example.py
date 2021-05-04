@@ -57,7 +57,7 @@ def basic_usage_example():
                                                       image=image,
                                                       show_predictions=True,
                                                       show_ground_truth=True,
-                                                      class_names=CLASS_NAMES,
+                                                      class_names=analyzer_ref.class_names,
                                                       rgb2bgr=False,
                                                       display=False,
                                                       save_fig_path=image_out_path,

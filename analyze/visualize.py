@@ -237,7 +237,8 @@ def overlay_boxes(image, boxes, class_names=None, color_factor=1, thickness=2, i
     return image, colors
 
 
-def overlay_scores_and_class_names(image, boxes, class_names=None, colors=None, text_position='above', text_size_factor=1, image_size_factor=1):
+def overlay_scores_and_class_names(image, boxes, class_names=None, colors=None, text_position='above',
+                                   text_size_factor=1, image_size_factor=1, text_additional=''):
     """
     Overlay class names on top of image.
 
@@ -257,6 +258,8 @@ def overlay_scores_and_class_names(image, boxes, class_names=None, colors=None, 
         Sets font size.
     image_size_factor : float, optional
         Scale displayed paramenter (e.g. text, lines) by image size - for nicer display.
+    text_additional : str, optional
+        Additional text to be placed to the left of scores and class names.
 
     Returns
     -------
@@ -270,10 +273,10 @@ def overlay_scores_and_class_names(image, boxes, class_names=None, colors=None, 
 
     try:  # if there are prediction scores
         scores = boxes.get_field("scores").tolist()
-        template = "{}: {:.2f}"  # label: score
+        template = "{}{}: {:.2f}"  # label: score
     except:
         scores = ['' for _ in range(len(boxes))]
-        template = "{}{}"  # label
+        template = "{}{}{}"  # label
 
     # get labels
     labels = boxes.get_field("labels")
@@ -294,7 +297,7 @@ def overlay_scores_and_class_names(image, boxes, class_names=None, colors=None, 
     for box, score, label, color in zip(bboxes, scores, labels, colors):
 
         # set text
-        text = template.format(label, score)
+        text = template.format(text_additional, label, score)
 
         # get text size
         (text_width, text_height), text_baseline = cv2.getTextSize(text, cv2.FONT_HERSHEY_SIMPLEX, font_size, 1)  # get text size

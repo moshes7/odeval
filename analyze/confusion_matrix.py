@@ -247,7 +247,7 @@ class ConfusionMatrix(object):
                 iou = Box.is_centers_inside_bbox(ground_truth, prediction)
 
             # filter predictions by iou
-            if (bbox_match_method == 'pred_bbox_center'):
+            if (bbox_match_method == 'pred_bbox_center'):  # consider only predictions whos center is inside ground truth box, regardless of iou
                     indices_high_iou = np.where(iou > iou_th) # greater than - to discard iou_th = 0
             elif (iou_criterion == 'all'):  # consider all predictions with iou higher than iou_th
                 indices_high_iou = np.where(iou >= iou_th)  # greater than or equal to - to include iou_th = 0

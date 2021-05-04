@@ -101,6 +101,21 @@ class Box(object):
         """
         return field in self.extra_fields
 
+    def del_field(self, field):
+        """
+        Delete field.
+
+        Parameters
+        ----------
+        field : str
+            Field name.
+
+        Returns
+        -------
+        None.
+        """
+        self.extra_fields.pop(field, None)
+
     def __getitem__(self, key):
 
         # cast key to list
@@ -724,3 +739,7 @@ class Box(object):
         diff = np.sum(np.abs(points_warped2 - points_warped)) # for debug
         '''
         return points_warped
+
+    @staticmethod
+    def empty(bbox_shape=(0,4), image_shape=(None, None)):
+        return Box(bbox=np.empty(bbox_shape), image_shape=image_shape)
