@@ -14,6 +14,7 @@ def basic_usage_example():
     # load reference analyzer
     analyzer_ref, analyze_root_dir = load_test_analyzer()
     base_dir = os.path.dirname(__file__)
+    images_path = os.path.abspath(os.path.join(base_dir, '..', 'tests/data/ILSVRC2015_00078000/images'))
 
     # create new analyzer
     output_dir = os.path.join(base_dir, 'output','simple_usage_example')
@@ -39,7 +40,7 @@ def basic_usage_example():
 
         # inference simulation
         prediction, ground_truth, image_path, image, _ = analyzer_ref.unpack_item(item)
-        image_path = os.path.join(analyze_root_dir, image_path)
+        image_path = os.path.join(images_path, os.path.basename(image_path))
 
         # log results in analyzer
         # IMPORTANT:
