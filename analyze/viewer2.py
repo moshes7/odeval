@@ -12,34 +12,20 @@ def run(analyzer):
     if app_mode == "Summary":
         st.write("reach")
     elif app_mode == "Frame Viewer":
-        # st.image(load_image(analyzer.data[st.session_state.count]["image_path"]).astype(np.uint8),
-        #          use_column_width=True)
-        # b1, _, b2 = st.columns(3)
-        # b1.button("Back", on_click=click)
-        # b2.button("Forward", on_click=click)
-        st.write("reach2")
 
+        x = st.columns(1)
 
+        b1, b2, b3 = st.columns(3)
 
-# class Viewer:
-#     def __init__(self, analyzer):
-#         st.title("Test")
-#         self.analyzer = analyzer
-#         self.app_mode = st.sidebar.selectbox("Mode", ["Summary", "Frame Viewer", "EXIT"])
-#         self.current_id: int = 0
-#         self.last_id = 1
-#
-#     def run(self) -> None:
-#         while 1:
-#             if self.app_mode == "Summary":
-#                 if self.last_id != self.current_id:
-#                     st.write("testy")
-#             elif self.app_mode == "Frame Viewer":
-#                 if self.last_id != self.current_id:
-#                     self.init_page_image()
-#             elif self.app_mode == "EXIT":
-#                 pass
-#
+        b1.button("Back", on_click=click_minus)
+        b3.button("Forward", on_click=click_plus)
+        if st.session_state.count < 0:
+            st.session_state.count = len(analyzer.data) - 1
+        elif st.session_state.count > len(analyzer.data) - 1:
+            st.session_state.count = 0
+        b2.write(st.session_state.count)
+        x[0].image(load_image(analyzer.data[st.session_state.count]["image_path"]).astype(np.uint8),
+                 use_column_width=True)
 
 @st.cache(show_spinner=False)
 def load_image(path: str):
@@ -47,5 +33,9 @@ def load_image(path: str):
     return image
 
 
-def click():
+def click_plus():
     st.session_state.count += 1
+
+
+def click_minus():
+    st.session_state.count -= 1
