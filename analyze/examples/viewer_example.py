@@ -2,7 +2,7 @@ import os
 
 from analyze.analyzer import Analyzer
 from analyze.viewer import AnalyzerViewer
-
+import analyze.viewer2
 if __name__ == '__main__':
 
     import os
@@ -19,9 +19,11 @@ if __name__ == '__main__':
     os.chdir('..')  # go one level up
 
     # initialize viewer
-    viewer = AnalyzerViewer(analyzer, resize_factor=2.)
-
-    # view analyzer
-    viewer.view()
+    # viewer = AnalyzerViewer(analyzer, resize_factor=2.)
+    #
+    # # view analyzer
+    # viewer.view()
+    viewer: analyze.viewer2.Viewer = analyze.viewer2.Viewer()
+    viewer.run()
 
     print('Done!')
