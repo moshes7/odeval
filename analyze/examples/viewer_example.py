@@ -1,11 +1,10 @@
 import os
 from analyze.analyzer import Analyzer
-from analyze.viewer import AnalyzerViewer
 import analyze.viewer2
 import streamlit as st
 
 
-@st.cache(show_spinner=False)
+@st.cache(show_spinner=False, allow_output_mutation=True)
 def load_analzyer(path):
     base_dir = os.path.dirname(__file__)
     relative_data_dir = '../tests/data/ILSVRC2015_00078000'
