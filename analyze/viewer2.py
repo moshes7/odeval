@@ -5,7 +5,7 @@ import analyze.analyzeViewer2
 import pandas
 
 if 'count' not in st.session_state:
-    st.session_state.count = 1
+    st.session_state.count = 0
 
 
 def run(analyzer):
@@ -14,11 +14,18 @@ def run(analyzer):
         st.session_state.analyzeViewer = analyze.analyzeViewer2.AnalyzeViewer2(analyzer)
     app_mode = st.sidebar.selectbox("Mode", ["Summary", "Frame Viewer", "EXIT"])
     if app_mode == "Summary":
-        st.write("reach")
+
+        tables = st.columns(2)
+        with tables[0].expander("Confusion Matrix"):
+            st.pyplot(st.session_state.analyzeViewer.get_total_plot_cm())
+        with st.expander("Class"):
+            st.dataframe(st.session_state.analyzeViewer.analyzer.metrics_tables["class"])
+        with tables[1].expander("Global Data"):
+            st.table(pandas.DataFrame.from_dict(st.session_state.analyzeViewer.analyzer.metrics_tables["global"]))
+
     elif app_mode == "Frame Viewer":
-
+        is_cm_available = st.sidebar.columns(2)[0].select_slider("Enable Confusion Matrix", ["YES", "NO"], value="NO")
         x = st.columns(3)
-
         b = st.columns(12)
         a = st.columns(3)
         b[0].button("Back", on_click=click_minus)
@@ -32,10 +39,12 @@ def run(analyzer):
         x[0].image(st.session_state.analyzeViewer.get_drawn_image(st.session_state.count), width=700)
         cm = get_frame_analysis(st.session_state.count)
         x[2].table(pandas.DataFrame.from_dict(cm.metrics_tables["global"]))
-        with st.expander("Confusion Metrix"):
-            st.pyplot(st.session_state.analyzeViewer.get_plot_cm(cm)[1])
         with st.expander("Class"):
             st.table(pandas.DataFrame.from_dict(cm.metrics_tables["class"]))
+        if is_cm_available == "YES":
+            with st.expander("Confusion Matrix"):
+                st.pyplot(st.session_state.analyzeViewer.get_plot_cm(cm)[1])
+
 
         # rerun
 
@@ -64,3 +73,5 @@ def get_frame_analysis(frame_id):
     # x1.table(x)
     # # _.table(cm.metrics["class"])
     # pass
+
+

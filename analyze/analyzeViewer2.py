@@ -4,12 +4,13 @@ from analyze.confusion_matrix import ConfusionMatrix
 import streamlit as st
 import holoviews as hv
 
+
 class AnalyzeViewer2:
     def __init__(self, analyzer):
         self.frame_id = -1
         self.analyzer = analyzer
+        self.ax_cm_total = None
 
-    @st.cache(show_spinner=False)
     def get_confusion_metrix_for_frame(self):
         prediction, ground_truth, _, _, cm = self.analyzer.get_item_unpacked(self.frame_id)
 
@@ -40,3 +41,16 @@ class AnalyzeViewer2:
                                                            filter_pred_by_score=True,
                                                            )
         return image_with_boxes
+
+    def get_total_plot_cm(self):
+        self.analyzer.evaluate_performance()
+        ax, fig = ConfusionMatrix.plot_confusion_matrix(self.analyzer.cm,
+                                                        display_labels=self.analyzer.class_names,
+                                                        add_miss_detection_col=self.analyzer.add_miss_detection_col,
+                                                        add_false_detection_row=self.analyzer.add_false_detection_row,
+                                                        ax=self.ax_cm_total,
+                                                        display=False,
+                                                        )
+        self.ax_cm_total = ax
+        return fig
+

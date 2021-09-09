@@ -879,7 +879,7 @@ class ConfusionMatrix(object):
 
         # convert metrics to dataframes
         df_global = pd.DataFrame.from_dict(metrics['global'])
-        df_class = pd.DataFrame.from_dict(metrics['class'])
+        df_class = pd.DataFrame.from_dict(metrics['class']).round(10)
 
         # --------------------
         # treat global metrics
