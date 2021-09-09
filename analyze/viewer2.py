@@ -19,9 +19,10 @@ def run(analyzer):
         with tables[0].expander("Confusion Matrix"):
             st.pyplot(st.session_state.analyzeViewer.get_total_plot_cm())
         with st.expander("Class"):
-            st.dataframe(st.session_state.analyzeViewer.analyzer.metrics_tables["class"])
+            st.session_state.analyzeViewer.analyzer.metrics_tables["class"][st.session_state.analyzeViewer.analyzer.metrics_tables["class"].select_dtypes(include=['number']).columns] = st.session_state.analyzeViewer.analyzer.metrics_tables["class"][st.session_state.analyzeViewer.analyzer.metrics_tables["class"].select_dtypes(include=['number']).columns].astype(float).round(3)
+            st.dataframe(st.session_state.analyzeViewer.analyzer.metrics_tables["class"].style.applymap(lambda v: 'color:red;' if (type(v) != str and v > 0) else None))
         with tables[1].expander("Global Data"):
-            st.table(pandas.DataFrame.from_dict(st.session_state.analyzeViewer.analyzer.metrics_tables["global"]))
+            st.table(st.session_state.analyzeViewer.analyzer.metrics_tables["global"])
 
     elif app_mode == "Frame Viewer":
         is_cm_available = st.sidebar.columns(2)[0].select_slider("Enable Confusion Matrix", ["YES", "NO"], value="NO")
@@ -67,11 +68,5 @@ def get_frame_analysis(frame_id):
     st.session_state.analyzeViewer.frame_id = frame_id
     cm = st.session_state.analyzeViewer.get_confusion_metrix_for_frame()
     return cm
-    # x = pandas.DataFrame.from_dict(cm.metrics["global"])
-    # # #st.dataframe(data=x, width=500, height=500)
-    # x1, x2, _ = st.columns(3)
-    # x1.table(x)
-    # # _.table(cm.metrics["class"])
-    # pass
 
 
