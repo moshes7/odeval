@@ -1,10 +1,8 @@
 import streamlit as st
-import cv2
-import numpy as np
-import analyze.analyzeViewer2
-import pandas
-import analyze.FrameViewer
+
 import analyze.DataVisualizer
+import analyze.FrameViewer
+import analyze.analyzeViewer2
 
 
 def run_summary_viewer():

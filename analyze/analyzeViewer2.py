@@ -7,12 +7,11 @@ import holoviews as hv
 
 class AnalyzeViewer2:
     def __init__(self, analyzer):
-        self.frame_id = -1
         self.analyzer = analyzer
         self.ax_cm_total = None
 
-    def get_confusion_metrix_for_frame(self):
-        prediction, ground_truth, _, _, cm = self.analyzer.get_item_unpacked(self.frame_id)
+    def get_confusion_matrix_for_frame(self, frame_id):
+        prediction, ground_truth, _, _, cm = self.analyzer.get_item_unpacked(frame_id)
 
         return ConfusionMatrix(prediction,
                                ground_truth,
@@ -53,4 +52,13 @@ class AnalyzeViewer2:
                                                         )
         self.ax_cm_total = ax
         return fig
+
+    def get_all_frames(self, size: int):
+        data: list = []
+        for i in range(size):
+            tmp = self.get_confusion_matrix_for_frame(st.session_state.frames_dict[i])
+            data.append([tmp.metrics["global"][st.session_state.micro_or_macro]["recall"], tmp.metrics["global"][st.session_state.micro_or_macro]["precision"], tmp.metrics["global"][st.session_state.micro_or_macro]["fdr"], st.session_state.frames_dict[i]])
+        return data
+
+
 
