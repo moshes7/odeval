@@ -12,7 +12,7 @@ def run(analyzer):
     app_mode = st.sidebar.selectbox("Mode", ["Summary", "Frame Viewer", "EXIT"])
     st.session_state.analyzeViewer.analyzer.score_th = st.sidebar.slider("Score th:", 0.0, 1.0, st.session_state.analyzeViewer.analyzer.score_th)
     st.session_state.analyzeViewer.analyzer.iou_th = st.sidebar.slider("IOU th:", 0.0, 1.0, st.session_state.analyzeViewer.analyzer.iou_th)
-    st.session_state.analyzeViewer.analyzer.bbox_match_method = st.sidebar.select_slider("Match Method:", ["iou", "pred_bbox_center"], value=st.session_state.analyzeViewer.analyzer.bbox_match_method)
+    st.session_state.analyzeViewer.analyzer.bbox_match_method = st.sidebar.radio("Match Method:", ["iou", "pred_bbox_center"])
     if st.sidebar.button('Reset to default'):
         st.session_state.analyzeViewer.analyzer.score_th = 0.3
         st.session_state.analyzeViewer.analyzer.iou_th = 0.5

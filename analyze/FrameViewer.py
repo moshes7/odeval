@@ -13,19 +13,17 @@ def show_frame_viewer(num_of_photos: int) -> None:
         for x in range(num_of_photos):
             st.session_state.frames_dict[x] = x
     is_cm_available: str = st.sidebar.radio("Enable Confusion Matrix", ["NO", "YES"])
-    sort_key: str = st.sidebar.radio("Sort by:", ["Nothing", "Recall", "Precision", "FDR"])
+    sort_key: str = st.sidebar.radio("Sort by:", ["Nothing", "Recall", "Precision", "FDR", "Miss Detection Rate", "False Detection Rate Vs GT", "False Detection Rate Vs Pred"])
     st.session_state.micro_or_macro = st.sidebar.radio("Choose graph type:", ["macro", "micro"])
     l: list = st.columns(3)
     l2: list = st.columns(12)
     l3: list = st.columns(3)
     insert_photos_buttons(l2, num_of_photos)
+    organized_data = get_organized_data(num_of_photos, sort_key)
     st.session_state.count = l3[0].slider("Choose a frame", 0, num_of_photos - 1, st.session_state.count)
-    graph_data = st.session_state.analyzeViewer.get_all_frames(num_of_photos)
-    graph_data = sort_images(graph_data, num_of_photos, sort_key)
-    show_analysis(is_cm_available, l)
     l[0].image(st.session_state.analyzeViewer.get_drawn_image(st.session_state.frames_dict[st.session_state.count]),
                width=700)
-    organized_data = separate_graph_list(graph_data)
+    show_analysis(is_cm_available, l)
     show_charts(organized_data, sort_key)
 
 
@@ -51,49 +49,74 @@ def show_analysis(is_cm_available, page_part) -> None:
             st.pyplot(st.session_state.analyzeViewer.get_plot_cm(cm)[1])
 
 
-def separate_graph_list(data):
-    recall = []
-    pre = []
-    fdr = []
-    for d in data:
-        # data_without_numbers.append([d[0], d[1], d[2]])
-        recall.append(d[0])
-        pre.append(d[1])
-        fdr.append(d[2])
-    return [recall, pre, fdr]  # , data_without_numbers]
+def separate_graph_list(data, key):
+    ret = []
+    if key != "Nothing":
+        for d in data:
+            tmp = 0
+            if key == "Recall":
+                tmp = d.recall
+            elif key == "Precision":
+                tmp = d.precision
+            elif key == "FDR":
+                tmp = d.fdr
+            elif key == "Miss Detection Rate":
+                tmp = d.mdr
+            elif key == "False Detection Rate Vs GT":
+                tmp = d.false_detection_rate_vs_gt
+            elif key == "False Detection Rate Vs Pred":
+                tmp = d.false_detection_rate_vs_pred
+            ret.append(tmp)
+    return ret
 
 
 def sort_images(data, num_of_photos, key):
     if key == "Nothing":
-        key = lambda tmp: tmp[3]
+        func = ret_id
     elif key == "Recall":
-        key = lambda tmp: tmp[0]
+        func = ret_recall
     elif key == "Precision":
-        key = lambda tmp: tmp[1]
+        func = ret_pre
+    elif key == "Miss Detection Rate":
+        func = ret_mdr
+    elif key == "False Detection Rate Vs GT":
+        func = ret_fdrvg
+    elif key == "False Detection Rate Vs Pred":
+        func = ret_fdrvp
     else:
-        key = lambda tmp: tmp[2]
-    sorted_data = sorted(data, key=key)
+        func = ret_fdr
+    sorted_data = sorted(data, key=func)
     for x in range(num_of_photos):
-        st.session_state.frames_dict[x] = sorted_data[x][3]
+        st.session_state.frames_dict[x] = sorted_data[x].id
     return sorted_data
 
 
+def ret_id(tmp): return tmp.id
+def ret_recall(tmp): return tmp.recall
+def ret_pre(tmp): return tmp.precision
+def ret_fdr(tmp): return tmp.fdr
+def ret_mdr(tmp): return tmp.mdr
+def ret_fdrvg(tmp): return tmp.false_detection_rate_vs_gt
+def ret_fdrvp(tmp): return tmp.false_detection_rate_vs_pred
+
+
 def show_charts(data, key):
-    if key == "Recall":
-        with st.expander("Recall"):
-            st.line_chart(pandas.DataFrame(data[0]))
-    elif key == "Precision":
-        with st.expander("Precision"):
-            st.line_chart(pandas.DataFrame(data[1]))
-    elif key == "FDR":
-        with st.expander("FDR"):
-            st.line_chart(pandas.DataFrame(data[2]))
-    else:
-        with st.expander("Recall"):
-            st.line_chart(pandas.DataFrame(data[0]))
-        with st.expander("Precision"):
-            st.line_chart(pandas.DataFrame(data[1]))
-        with st.expander("FDR"):
-            st.line_chart(pandas.DataFrame(data[2]))
+    if key != "Nothing":
+        with st.expander(key):
+            st.line_chart(pandas.DataFrame(data))
+
+    # else:
+    #     with st.expander("Recall"):
+    #         st.line_chart(pandas.DataFrame(data[0]))
+    #     with st.expander("Precision"):
+    #         st.line_chart(pandas.DataFrame(data[1]))
+    #     with st.expander("FDR"):
+    #         st.line_chart(pandas.DataFrame(data[2]))
     # with st.expander("Mixed"):
     #     st.line_chart(pandas.DataFrame(data[3], columns=["Recall", "Precision", "FDR"]))
+
+
+def get_organized_data(num_of_photos, sort_key):
+    graph_data = st.session_state.analyzeViewer.get_all_frames(num_of_photos)
+    graph_data = sort_images(graph_data, num_of_photos, sort_key)
+    return separate_graph_list(graph_data, sort_key)

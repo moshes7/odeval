@@ -57,8 +57,22 @@ class AnalyzeViewer2:
         data: list = []
         for i in range(size):
             tmp = self.get_confusion_matrix_for_frame(st.session_state.frames_dict[i])
-            data.append([tmp.metrics["global"][st.session_state.micro_or_macro]["recall"], tmp.metrics["global"][st.session_state.micro_or_macro]["precision"], tmp.metrics["global"][st.session_state.micro_or_macro]["fdr"], st.session_state.frames_dict[i]])
+            data.append(GraphData(tmp.metrics["global"][st.session_state.micro_or_macro]["recall"],
+                                  tmp.metrics["global"][st.session_state.micro_or_macro]["precision"],
+                                  tmp.metrics["global"][st.session_state.micro_or_macro]["fdr"],
+                                  st.session_state.frames_dict[i],
+                                  tmp.metrics["global"][st.session_state.micro_or_macro]["miss_detection_rate"],
+                                  tmp.metrics["global"][st.session_state.micro_or_macro]["false_detection_rate_vs_gt"],
+                                  tmp.metrics["global"][st.session_state.micro_or_macro]["false_detection_rate_vs_pred"]))
         return data
 
 
-
+class GraphData:
+    def __init__(self, recall, precision, fdr, frame_id, mdr, false_detection_rate_vs_gt, false_detection_rate_vs_pred):
+        self.recall = recall
+        self.precision = precision
+        self.fdr = fdr
+        self.id = frame_id
+        self.mdr = mdr
+        self.false_detection_rate_vs_gt = false_detection_rate_vs_gt
+        self.false_detection_rate_vs_pred = false_detection_rate_vs_pred
