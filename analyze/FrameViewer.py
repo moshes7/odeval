@@ -6,11 +6,15 @@ import analyze.DataVisualizer
 def show_frame_viewer(num_of_photos: int) -> None:
     if 'frames_dict' not in st.session_state:
         st.session_state.frames_dict = {}
+        st.session_state.reverse = True
+        st.session_state.steps = 1
+        st.session_state.num_of_photos = num_of_photos
         for x in range(num_of_photos):
             st.session_state.frames_dict[x] = x
     is_cm_available: str = st.sidebar.radio("Enable Confusion Matrix", ["NO", "YES"])
     sort_key: str = st.sidebar.radio("Sort by:", ["Nothing", "Recall", "Precision", "FDR", "Miss Detection Rate",
                                                   "False Detection Rate Vs GT", "False Detection Rate Vs Pred"])
+    st.session_state.reverse = True if st.sidebar.radio("Ascending/Descending", ["Ascending", "Descending"]) == "Descending" else False
     if sort_key == "Nothing":
         sort_key = st.sidebar.multiselect("Show on graph:",
                                           ["Recall", "Precision", "FDR", "Miss Detection Rate",
@@ -21,8 +25,15 @@ def show_frame_viewer(num_of_photos: int) -> None:
     l3: list = st.columns(3)
     insert_photos_buttons(l2, num_of_photos)
     organized_data = get_organized_data(num_of_photos, sort_key)
+    str_frame = l3[1].text_input("Choose specific frame", str(st.session_state.count))
+    if str_frame.isnumeric():
+        st.session_state.count = int(str_frame)
+        check_count_vaidation()
     st.session_state.count = l3[0].slider("Choose a frame", 0, num_of_photos - 1, st.session_state.count)
     l2[1].write("Frame ID is: " + str(st.session_state.frames_dict[st.session_state.count]))
+    str_steps = l2[3].text_input("steps", str(st.session_state.steps))
+    if str_steps.isnumeric():
+        st.session_state.steps = int(str_steps)
     l[0].image(st.session_state.analyzeViewer.get_drawn_image(st.session_state.frames_dict[st.session_state.count]),
                width=700)
     show_analysis(is_cm_available, l)
@@ -31,12 +42,15 @@ def show_frame_viewer(num_of_photos: int) -> None:
 
 def insert_photos_buttons(buttons, num_of_photos) -> None:
     if buttons[0].button("Back"):
-        st.session_state.count -= 1
+        st.session_state.count -= st.session_state.steps
     if buttons[2].button("Forward"):
-        st.session_state.count += 1
+        st.session_state.count += st.session_state.steps
+    check_count_vaidation()
+
+def check_count_vaidation():
     if st.session_state.count < 0:
-        st.session_state.count = num_of_photos - 1
-    elif st.session_state.count > num_of_photos - 1:
+        st.session_state.count = st.session_state.num_of_photos - 1
+    elif st.session_state.count > st.session_state.num_of_photos - 1:
         st.session_state.count = 0
 
 
@@ -87,7 +101,7 @@ def sort_images(data, num_of_photos, key):
         func = ret_fdrvp
     else:
         func = ret_fdr
-    sorted_data = sorted(data, key=func)
+    sorted_data = sorted(data, key=func, reverse=st.session_state.reverse)
     for x in range(num_of_photos):
         st.session_state.frames_dict[x] = sorted_data[x].id
     return sorted_data
@@ -117,9 +131,9 @@ def ret_fdrvp(tmp): return tmp.false_detection_rate_vs_pred, tmp.id
 def show_charts(data, key):
     if len(key) > 0:
         if isinstance(key, list):
-            st.line_chart(pandas.DataFrame(data, columns=sorted(key)))
+            st.line_chart(pandas.DataFrame(data, columns=sorted(key)), height=400)
         else:
-            st.line_chart(pandas.DataFrame(data))
+            st.line_chart(pandas.DataFrame(data), height=400)
 
 
 def get_organized_data(num_of_photos, sort_key):
