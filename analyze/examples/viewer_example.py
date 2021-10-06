@@ -16,8 +16,7 @@ def load_analzyer(path):
     analyzer_file = os.path.join(data_dir, path)
     analyzer = Analyzer.load(analyzer_file, load_images_from_dir=False)
     for i in range(len(analyzer.data)):
-        analyzer.data[i]["image_path"] = os.getcwd() + "/../tests/data/ILSVRC2015_00078000" \
-                                                       "/images/" + os.path.basename(analyzer.data[i]["image_path"])
+        analyzer.data[i]["image_path"] = os.path.dirname(os.path.abspath(__file__)) + "/../tests/data/ILSVRC2015_00078000/images/" + os.path.basename(analyzer.data[i]["image_path"])
     return analyzer
 
 

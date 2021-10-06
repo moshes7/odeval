@@ -4,18 +4,20 @@ import analyze.DataVisualizer
 
 
 def show_frame_viewer(num_of_photos: int) -> None:
-    if 'frames_dict' not in st.session_state:
+    if 'frames_dict' not in st.session_state:  # Initializes all variables.
         st.session_state.frames_dict = {}
         st.session_state.reverse = True
         st.session_state.steps = 1
         st.session_state.num_of_photos = num_of_photos
-        for x in range(num_of_photos):
+        for x in range(num_of_photos):  # Initializes the frames dict, which can change the order of the frames.
             st.session_state.frames_dict[x] = x
-    is_cm_available: str = st.sidebar.radio("Enable Confusion Matrix", ["NO", "YES"])
+
+    is_cm_available: str = st.sidebar.radio("Enable Confusion Matrix", ["NO", "YES"])  # Whether or not a confusion matrix will be shown.
     sort_key: str = st.sidebar.radio("Sort by:", ["Nothing", "Recall", "Precision", "FDR", "Miss Detection Rate",
                                                   "False Detection Rate Vs GT", "False Detection Rate Vs Pred"])
-    st.session_state.reverse = True if st.sidebar.radio("Ascending/Descending", ["Ascending", "Descending"]) == "Descending" else False
-    if sort_key == "Nothing":
+    st.session_state.reverse = True if st.sidebar.radio("Ascending/Descending",
+                                                        ["Ascending", "Descending"]) == "Descending" else False  # Whether or not reverse the graph.
+    if sort_key == "Nothing":  # If you don't want the frames in a specific order, you will be able to create a new graph that will contain costumize data.
         sort_key = st.sidebar.multiselect("Show on graph:",
                                           ["Recall", "Precision", "FDR", "Miss Detection Rate",
                                            "False Detection Rate Vs GT", "False Detection Rate Vs Pred"])
@@ -26,7 +28,7 @@ def show_frame_viewer(num_of_photos: int) -> None:
     insert_photos_buttons(l2, num_of_photos)
     organized_data = get_organized_data(num_of_photos, sort_key)
     str_frame = l3[1].text_input("Choose specific frame", str(st.session_state.count))
-    if str_frame.isnumeric():
+    if str_frame.isnumeric():  # Check if the data is numeric.
         st.session_state.count = int(str_frame)
         check_count_vaidation()
     st.session_state.count = l3[0].slider("Choose a frame", 0, num_of_photos - 1, st.session_state.count)
@@ -34,7 +36,7 @@ def show_frame_viewer(num_of_photos: int) -> None:
     str_steps = l2[3].text_input("steps", str(st.session_state.steps))
     if str_steps.isnumeric():
         st.session_state.steps = int(str_steps)
-    l[0].image(st.session_state.analyzeViewer.get_drawn_image(st.session_state.frames_dict[st.session_state.count]),
+    l[0].image(st.session_state.analyzeViewer.get_drawn_image(st.session_state.frames_dict[st.session_state.count]),  # Put the image on the screen.
                width=700)
     show_analysis(is_cm_available, l)
     show_charts(organized_data, sort_key)
@@ -46,6 +48,7 @@ def insert_photos_buttons(buttons, num_of_photos) -> None:
     if buttons[2].button("Forward"):
         st.session_state.count += st.session_state.steps
     check_count_vaidation()
+
 
 def check_count_vaidation():
     if st.session_state.count < 0:
