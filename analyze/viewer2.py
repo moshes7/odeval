@@ -10,7 +10,7 @@ def run(analyzer):
         st.set_page_config(layout='wide')
         st.session_state.test = 0
         st.session_state.analyzeViewer = analyze.analyzeViewer2.AnalyzeViewer2(analyzer)
-    app_mode = st.sidebar.selectbox("Mode", ["Summary", "Frame Viewer", "EXIT", "TEST"])
+    app_mode = st.sidebar.selectbox("Mode", ["Summary", "Frame Viewer"])
     st.session_state.analyzeViewer.analyzer.score_th = st.sidebar.slider("Score th:", 0.0, 1.0, st.session_state.analyzeViewer.analyzer.score_th)
     st.session_state.analyzeViewer.analyzer.iou_th = st.sidebar.slider("IOU th:", 0.0, 1.0, st.session_state.analyzeViewer.analyzer.iou_th)
     st.session_state.analyzeViewer.analyzer.bbox_match_method = st.sidebar.radio("Match Method:", ["iou", "pred_bbox_center"])
@@ -22,10 +22,3 @@ def run(analyzer):
         analyze.SummaryViewer.run_summary_viewer()
     elif app_mode == "Frame Viewer":
         analyze.FrameViewer.show_frame_viewer(len(analyzer.data))
-    elif app_mode == "TEST":
-        x = st.empty()
-        while True:
-            x.image(
-                st.session_state.analyzeViewer.get_drawn_image(st.session_state.test))
-            st.session_state.test += 1
-            time.sleep(0.01)
