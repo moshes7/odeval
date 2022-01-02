@@ -13,21 +13,22 @@ def show_frame_viewer(num_of_photos: int) -> None:
         st.session_state.steps = 1
         st.session_state.key_counter = 0
         st.session_state.play = False
-        st.session_state.prev_sort_key = ""
         st.session_state.organized_data = ""
         st.session_state.num_of_photos = num_of_photos
+        st.session_state.sort_key = ""
         for x in range(num_of_photos):  # Initializes the frames dict, which can change the order of the frames.
             st.session_state.frames_dict[x] = x
+        st.session_state.prev_session_state = copy_session_state()
 
     is_cm_available: str = st.sidebar.radio("Enable Confusion Matrix",
                                             ["NO", "YES"])  # Whether or not a confusion matrix will be shown.
-    sort_key: str = st.sidebar.radio("Sort by:", ["Nothing", "Recall", "Precision", "FDR", "Miss Detection Rate",
+    st.session_state.sort_key: str = st.sidebar.radio("Sort by:", ["Nothing", "Recall", "Precision", "FDR", "Miss Detection Rate",
                                                   "False Detection Rate Vs GT", "False Detection Rate Vs Pred"])
     st.session_state.reverse = True if st.sidebar.radio("Ascending/Descending",
                                                         ["Ascending",
                                                          "Descending"]) == "Descending" else False  # Whether or not reverse the graph.
-    if sort_key == "Nothing":  # If you don't want the frames in a specific order, you will be able to create a new graph that will contain costumize data.
-        sort_key = st.sidebar.multiselect("Show on graph:",
+    if st.session_state.sort_key == "Nothing":  # If you don't want the frames in a specific order, you will be able to create a new graph that will contain costumize data.
+        st.session_state.sort_key = st.sidebar.multiselect("Show on graph:",
                                           ["Recall", "Precision", "FDR", "Miss Detection Rate",
                                            "False Detection Rate Vs GT", "False Detection Rate Vs Pred"])
     st.session_state.micro_or_macro = st.sidebar.radio("Choose graph type:", ["macro", "micro"])
@@ -37,7 +38,6 @@ def show_frame_viewer(num_of_photos: int) -> None:
 
     if l2[4].button("Play"):
         st.session_state.play = not st.session_state.play
-
     if not st.session_state.play:
         insert_photos_buttons(l2, num_of_photos)
         str_frame = l3[1].text_input("Choose specific frame", str(st.session_state.count))
@@ -48,16 +48,15 @@ def show_frame_viewer(num_of_photos: int) -> None:
         str_steps = l2[3].text_input("steps", str(st.session_state.steps))
         if str_steps.isnumeric():
             st.session_state.steps = int(str_steps)
-        if sort_key != st.session_state.prev_sort_key:
-            st.session_state.organized_data = get_organized_data(num_of_photos, sort_key)
+        if not compare_session_state(dict(st.session_state), st.session_state.prev_session_state):
+            st.session_state.organized_data = get_organized_data(num_of_photos, st.session_state.sort_key)
         show_analysis(is_cm_available, l)
-        show_charts(st.session_state.organized_data, sort_key)
+        show_charts(st.session_state.organized_data, st.session_state.sort_key)
         l2[1].write("Frame ID is: " + str(st.session_state.frames_dict[st.session_state.count]))
 
         l[0].image(st.session_state.analyzeViewer.get_drawn_image(st.session_state.frames_dict[st.session_state.count]),
                    # Put the image on the screen.
                    width=700)
-        st.session_state.prev_sort_key = sort_key
     else:
         st.session_state.play = not st.session_state.play
         x = l[0].empty()
@@ -72,6 +71,7 @@ def show_frame_viewer(num_of_photos: int) -> None:
             st.session_state.count += 1
             st.session_state.key_counter += 1
             check_count_vaidation()
+    st.session_state.prev_session_state = copy_session_state()
 
 
 def insert_photos_buttons(buttons, num_of_photos) -> None:
@@ -175,3 +175,16 @@ def get_organized_data(num_of_photos, sort_key):
     graph_data = st.session_state.analyzeViewer.get_all_frames(num_of_photos)
     graph_data = sort_images(graph_data, num_of_photos, sort_key)
     return separate_graph_list(graph_data, sort_key)
+
+
+def compare_session_state(d1, d2):
+    for key in ["micro_or_macro", "reverse", "sort_key", "analyzeViewer"]:
+        if d1[key] != d2[key]:
+            return False
+    return True
+
+def copy_session_state():
+    ret: dict = {}
+    for key in ["micro_or_macro", "reverse", "sort_key", "analyzeViewer"]:
+        ret[key] = st.session_state[key]
+    return ret
