@@ -1,1 +1,9 @@
 streamlit
+opencv-python
+matplotlib
+dill
+pylatex
+dataframe_image
+seaborn
+Shapely
+holoviews
