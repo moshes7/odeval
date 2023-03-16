@@ -238,7 +238,7 @@ class ConfusionMatrix(object):
         # filter by iou
         # ---------------------------
         # initialize iou_indicator matrix
-        iou_indicator = np.zeros((len(ground_truth), len(prediction)), dtype=np.int)  # shape of (num_gt, num_pred) ; 1 where iou exceeds threshold, 0 elsewhere
+        iou_indicator = np.zeros((len(ground_truth), len(prediction)), dtype=int)  # shape of (num_gt, num_pred) ; 1 where iou exceeds threshold, 0 elsewhere
         if (len(ground_truth) > 0) and (len(prediction) > 0):  # calculate iou only if both objects are not empty
             # calculate iou matrix
             if bbox_match_method == 'iou':

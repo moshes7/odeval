@@ -10,13 +10,16 @@ if __name__ == '__main__':
     pn.extension()
 
     # load analyzer
-
     base_dir = os.path.dirname(__file__)
     relative_data_dir = '../tests/data/ILSVRC2015_00078000'
     data_dir = os.path.join(base_dir, relative_data_dir)
     analyzer_file = os.path.join(data_dir, 'analyzer.p')
     analyzer = Analyzer.load(analyzer_file, load_images_from_dir=False)
     os.chdir('..')  # go one level up
+
+    # update image_path to local image folder
+    for key, val in analyzer.items():
+        val['image_path'] = os.path.join(data_dir, 'images', os.path.basename(val['image_path']))
 
     # initialize viewer
     viewer = AnalyzerViewer(analyzer, resize_factor=2.)

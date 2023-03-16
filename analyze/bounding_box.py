@@ -548,7 +548,7 @@ class Box(object):
         centers = [Point(center[0], center[1]) for center in centers]  # convert centers to shapely Point() objects
 
         # check if centers are inside boxes
-        is_center_inside = np.zeros((bbox.shape[0], bbox2centers.shape[0]), dtype=np.int)  # shape (N, M)
+        is_center_inside = np.zeros((bbox.shape[0], bbox2centers.shape[0]), dtype=int)  # shape (N, M)
         for n in range(bbox.shape[0]):
 
             # convert bounding box to polygon
